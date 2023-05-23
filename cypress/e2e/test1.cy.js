@@ -1,22 +1,86 @@
-describe("Checking UI elements",function(){
- 
-    it("Verifying input box",function(){
-        cy.visit("https://demo.nopcommerce.com/register?returnUrl=%2F")
-        cy.get('#small-searchterms').should('be.visible').should('be.enabled').type("books")
-        cy.get('#gender-male').should('be.visible').check().should('be.checked')
-        cy.get('#gender-female').should('be.visible').check().should('be.checked')
-        cy.get('input#FirstName').should('be.visible').should('be.enabled').type("muthu")
-        cy.get('input#LastName').should('be.visible').should('be.enabled').type("krishnan")
-        cy.get('input#Email').should('be.visible').should('be.enabled').type("muthukrishnan6164@gmail.com")
-        cy.get('input#Company').should('be.visible').should('be.enabled').type("Qaon cloud")
-        cy.get('input#Password').should('be.visible').should('be.enabled').type("123shoot@")
-        cy.get('input#ConfirmPassword').should('be.visible').should('be.enabled').type("123shoot@")
-        cy.get('#register-button').should('be.visible').click()
- 
-        cy.visit("https://demo.nopcommerce.com/login?returnUrl=%2Fwishlist")
-        cy.get('input#Email').should('be.visible').should('be.enabled').type("muthukrishnan6164@gmail.com")
-        cy.get('input#Password').should('be.visible').should('be.enabled').type("123shoot@")
-     })
+Cypress.on('uncaught:exception', (err, runnable) =>
+{
+    return false
+});
 
 
+describe('Api test for store order', function()
+
+
+{
+    it('Validate Store order ID POST ', function()
+
+
+    {
+        let store=
+
+
+        {
+            "id": 9,
+            "petId": 121,
+            "quantity": 200,
+            "shipDate": "2022-12-13T04:18:03.195+0000",
+            "status": "placed",
+            "complete": true
+          }
+
+
+          cy.request('POST', 'https://petstore.swagger.io/v2/store/order', store ).then((response)=>
+
+
+          {
+           expect(response.status).equal(200)
+           expect(response.body.id).equal(store.id)
+           expect(response.body.petId).equal(store.petId)
+           expect(response.body.quantity).equal(store.quantity)
+           expect(response.body.shipDate).equal(store.shipDate)
+           expect(response.body.status).equal(store.status)
+           expect(response.body.complete).equal(store.complete)
     })
+})
+   
+it('API test store order ID GET', function()
+
+
+{
+        cy.request('GET', 'https://petstore.swagger.io/v2/store/order/9').then((response)=>
+
+
+        {
+           expect(response.status).equal(200)
+           expect(response.body.id).equal(9)
+           expect(response.body.petId).equal(121)
+           expect(response.body.quantity).equal(200)
+           expect(response.body.shipDate).equal("2022-12-13T04:18:03.195+0000")
+           expect(response.body.status).equals("placed")
+           expect(response.body.complete).equal(true)
+        })
+    })
+
+
+    it('API test store order ID GET inventory status',function()
+
+
+    {
+        cy.request('GET', 'https://petstore.swagger.io/v2/store/inventory').then(function(response)
+
+
+        {
+            expect(response.status).equal(200)
+         
+        })
+    })
+
+
+    it('API test store order ID DELETE', function()
+
+
+    {
+        cy.request('DELETE', 'https://petstore.swagger.io/v2/store/order/9').then((response) =>
+
+
+        {
+            expect(response.status).equal(200)
+        })
+    })
+})
